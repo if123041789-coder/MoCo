@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>感測器偵測示範</title>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  #log { margin-top: 20px; padding: 12px; background: #eee; }
+</style>
+</head>
+<body>
+
+<h2>行動裝置姿態測試</h2>
+<button id="startBtn">開始偵測</button>
+
+<div id="log">尚未開始</div>
+
+<script>
+async function enableSensor() {
+  // iOS 特殊授權流程
+  if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+    try {
+      return await DeviceMotionEvent.requestPermission();
+    } catch (e) {
+      return "denied";
+    }
+  }
+  // 其他平台直接視為允許
+  return "granted";
+}
+
+document.getElementById("startBtn").addEventListener("click", async () => {
+  const perm = await enableSensor();
+  const logBox = document.getElementById("log");
+
+  if (perm !== "granted") {
+    logBox.textContent = "未授權存取感測器。";
+    return;
+  }
+
+  logBox.textContent = "已啟動，等待資料…";
+
+  window.addEventListener("devicemotion", e => {
+    const r = e.rotationRate || {};
+
+    const text =
+      "旋轉角速度（單位：°/s）\n" +
+      `Z 軸 (alpha): ${r.alpha?.toFixed?.(2) ?? "無資料"}\n` +
+      `X 軸 (beta):  ${r.beta?.toFixed?.(2) ?? "無資料"}\n` +
+      `Y 軸 (gamma): ${r.gamma?.toFixed?.(2) ?? "無資料"}\n`;
+
+    logBox.textContent = text;
+  });
+});
+</script>
+
+</body>
+</html>
