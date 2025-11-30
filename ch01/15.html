@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行動感應裝置定位</title>
+</head>
+<body>
+  <h1>行動裝置定位資訊</h1>
+  <button onclick="getLocation()">取得位置</button>
+  <p id="status"></p>
+  <ul>
+    <li>經度: <span id="longitude">-</span></li>
+    <li>緯度: <span id="latitude">-</span></li>
+    <li>海拔: <span id="altitude">-</span></li>
+  </ul>
+
+  <script>
+    function getLocation() {
+      const status = document.getElementById('status');
+      const longitudeEl = document.getElementById('longitude');
+      const latitudeEl = document.getElementById('latitude');
+      const altitudeEl = document.getElementById('altitude');
+
+      if (!navigator.geolocation) {
+        status.textContent = '瀏覽器不支援地理定位';
+        return;
+      }
+
+      status.textContent = '正在取得位置...';
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = position.coords;
+          longitudeEl.textContent = coords.longitude.toFixed(6);
+          latitudeEl.textContent = coords.latitude.toFixed(6);
+          altitudeEl.textContent = coords.altitude !== null ? coords.altitude.toFixed(2) + ' 公尺' : '無法取得';
+          status.textContent = '位置取得成功';
+        },
+        (error) => {
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              status.textContent = '使用者拒絕提供位置';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              status.textContent = '無法取得位置資訊';
+              break;
+            case error.TIMEOUT:
+              status.textContent = '取得位置逾時';
+              break;
+            default:
+              status.textContent = '發生未知錯誤';
+              break;
+          }
+        },
+        {
+          enableHighAccuracy: true, // 嘗試取得高精度 GPS
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    }
+  </script>
+</body>
+</html>
