@@ -4,52 +4,70 @@
 <meta charset="UTF-8">
 <title>DeviceMotion Demo</title>
 <style>
-  body { font-family: Arial; padding: 20px; }
-  #log { margin-top: 20px; padding: 12px; background: #eee; }
+  body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+  button { padding: 10px 20px; font-size: 16px; }
+  pre { background: #f3f3f3; padding: 10px; border-radius: 6px; }
 </style>
 </head>
 <body>
 
 <h2>DeviceMotion 測試頁面</h2>
-<button id="startBtn">開始偵測</button>
+<p>請點擊下方按鈕授權存取行動裝置感測器。</p>
 
-<div id="log">尚未開始</div>
+<button id="btn">啟用 DeviceMotion</button>
+
+<h3>感測器資料：</h3>
+<pre id="output">尚未啟用</pre>
 
 <script>
-async function enableSensor() {
-  // iOS 特殊授權流程
-  if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
-    try {
-      return await DeviceMotionEvent.requestPermission();
-    } catch (e) {
-      return "denied";
-    }
+async function requestPermissionIfNeeded() {
+  // 非 iOS：不需要任何授權流程
+  if (typeof DeviceMotionEvent.requestPermission !== "function") {
+    return "granted";
   }
-  // 其他平台直接視為允許
-  return "granted";
+
+  // iOS：必須在使用者操作後呼叫
+  try {
+    const state = await DeviceMotionEvent.requestPermission();
+    return state; // "granted" 或 "denied"
+  } catch (err) {
+    return "denied";
+  }
 }
 
-document.getElementById("startBtn").addEventListener("click", async () => {
-  const perm = await enableSensor();
-  const logBox = document.getElementById("log");
+document.getElementById("btn").addEventListener("click", async () => {
+  const result = await requestPermissionIfNeeded();
 
-  if (perm !== "granted") {
-    logBox.textContent = "未授權存取感測器。";
+  if (result !== "granted") {
+    document.getElementById("output").textContent = "使用者拒絕授權或未允許感測器存取。";
     return;
   }
 
-  logBox.textContent = "已啟動，等待資料…";
+  document.getElementById("output").textContent = "等待 DeviceMotion 資料…";
 
-  window.addEventListener("devicemotion", e => {
-    const r = e.rotationRate || {};
+  window.addEventListener("devicemotion", event => {
+    const acc = event.acceleration;
+    const accG = event.accelerationIncludingGravity;
+    const rot = event.rotationRate;
 
-    const text =
-      "旋轉角速度（單位：°/s）\n" +
-      `Z 軸 (alpha): ${r.alpha?.toFixed?.(2) ?? "無資料"}\n` +
-      `X 軸 (beta):  ${r.beta?.toFixed?.(2) ?? "無資料"}\n` +
-      `Y 軸 (gamma): ${r.gamma?.toFixed?.(2) ?? "無資料"}\n`;
+    document.getElementById("output").textContent =
+      `加速度（不含重力）:
+  x: ${acc?.x?.toFixed(3)}  
+  y: ${acc?.y?.toFixed(3)}
+  z: ${acc?.z?.toFixed(3)}
 
-    logBox.textContent = text;
+加速度（含重力）:
+  x: ${accG?.x?.toFixed(3)}
+  y: ${accG?.y?.toFixed(3)}
+  z: ${accG?.z?.toFixed(3)}
+
+旋轉速度:
+  alpha(Z): ${rot?.alpha?.toFixed(3)}
+  beta(X):  ${rot?.beta?.toFixed(3)}
+  gamma(Y): ${rot?.gamma?.toFixed(3)}
+
+更新頻率: ${event.interval} ms
+`;
   });
 });
 </script>
