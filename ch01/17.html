@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>FormData Demo</title>
+</head>
+<body>
+
+  <h2>送出表單（FormData）</h2>
+
+  <form id="formElem">
+    <label>
+      名字：
+      <input type="text" name="name" value="John">
+    </label>
+    <br><br>
+
+    <label>
+      姓氏：
+      <input type="text" name="surname" value="Smith">
+    </label>
+    <br><br>
+
+    <input type="submit" value="送出">
+  </form>
+
+  <script>
+    const formElem = document.getElementById('formElem');
+
+    formElem.onsubmit = async (e) => {
+      e.preventDefault(); // 阻止表單預設送出
+
+      // 建立 FormData 物件
+      const formData = new FormData(formElem);
+
+      // 你也可以動態修改欄位
+      // formData.append('age', '18');
+      // formData.set('name', 'Tom');
+
+      // 查看 FormData 內容
+      for (let [key, value] of formData) {
+        console.log(key, value);
+      }
+
+      // 使用 fetch 傳送
+      const response = await fetch('http://localhost:3000/user', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    };
+  </script>
+
+</body>
+</html>
