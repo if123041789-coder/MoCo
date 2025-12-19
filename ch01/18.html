@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>FormData File Upload</title>
+</head>
+<body>
+
+  <h2>傳送包含檔案的 Form</h2>
+
+  <form id="formElem">
+    <input type="text" name="firstName" value="John">
+    <br><br>
+
+    Picture:
+    <input type="file" name="picture" accept="image/*">
+    <br><br>
+
+    <input type="submit" value="送出">
+  </form>
+
+  <script>
+    const formElem = document.getElementById("formElem");
+
+    formElem.onsubmit = async (e) => {
+      e.preventDefault();
+
+      // 1️⃣ 建立 FormData
+      const formData = new FormData(formElem);
+
+      // 2️⃣ 檢查 FormData 內容
+      for (let [name, value] of formData) {
+        console.log(name, value);
+      }
+
+      // 3️⃣ 傳送（示意）
+      await fetch('/fake-upload-url', {
+        method: 'POST',
+        body: formData
+      });
+
+      alert("FormData（含檔案）已送出（示意）");
+    };
+  </script>
+
+</body>
+</html>
