@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>位置分享</title>
+    <title>位置分享 - Firebase 版</title>
     <style>
         /* ==================== 整體頁面樣式 ==================== */
         body {
@@ -257,7 +257,7 @@
 </head>
 <body>
     <!-- ==================== 頁面標題 ==================== -->
-    <h1>位置分享</h1>
+    <h1>📍 位置分享</h1>
     <p class="subtitle">使用 Firebase 實時通訊</p>
 
     <!-- ==================== 分頁標籤 ==================== -->
@@ -270,37 +270,49 @@
     <!-- ==================== 分頁 1: 建立房間 ==================== -->
     <div id="createRoom" class="tab-content active">
         <div class="container">
-            <div class="section-title">建立新房間</div>
+            <div class="section-title">🏠 建立新房間</div>
             
             <div id="createMessage"></div>
 
             <label>你的名字:</label>
             <input type="text" id="myName" placeholder="例如: 小明" value="">
 
-            <button onclick="createNewRoom()">建立房間並分享位置</button>
+            <button onclick="createNewRoom()">🚀 建立房間並開始分享</button>
 
             <div id="roomCodeDisplay"></div>
 
-            <p class="help-text">建立房間後，將房間代碼分享給朋友，他們就能即時看到你的位置！</p>
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                <p style="margin: 5px 0; color: #666;">💡 <strong>使用說明：</strong></p>
+                <p style="margin: 5px 0; color: #666;">1️⃣ 輸入你的名字後按「建立房間」</p>
+                <p style="margin: 5px 0; color: #666;">2️⃣ 允許瀏覽器使用定位功能</p>
+                <p style="margin: 5px 0; color: #666;">3️⃣ 複製房間代碼分享給朋友</p>
+                <p style="margin: 5px 0; color: #666;">4️⃣ 朋友用代碼加入就能互相看到位置！</p>
+            </div>
         </div>
     </div>
 
     <!-- ==================== 分頁 2: 加入房間 ==================== -->
     <div id="joinRoom" class="tab-content">
         <div class="container">
-            <div class="section-title">加入朋友的房間</div>
+            <div class="section-title">🔗 加入朋友的房間</div>
 
             <div id="joinMessage"></div>
 
             <label>你的名字:</label>
             <input type="text" id="joinName" placeholder="例如: 小華" value="">
 
-            <label>輸入房間代碼:</label> 
-            <input type="text" id="roomCodeInput" placeholder="例如: ABC123" style="text-transform: uppercase;">
+            <label>輸入房間代碼 (6位):</label> 
+            <input type="text" id="roomCodeInput" placeholder="例如: ABC123" style="text-transform: uppercase; font-size: 18px; text-align: center; letter-spacing: 2px;">
 
-            <button onclick="joinExistingRoom()">加入房間並分享位置</button>
+            <button onclick="joinExistingRoom()">✅ 加入房間</button>
 
-            <p class="help-text">輸入朋友給你的房間代碼，就能看到房間內所有人的位置！</p>
+            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 15px;">
+                <p style="margin: 5px 0; color: #666;">💡 <strong>使用說明：</strong></p>
+                <p style="margin: 5px 0; color: #666;">1️⃣ 輸入你的名字</p>
+                <p style="margin: 5px 0; color: #666;">2️⃣ 貼上或輸入朋友給你的房間代碼</p>
+                <p style="margin: 5px 0; color: #666;">3️⃣ 按「加入房間」並允許定位</p>
+                <p style="margin: 5px 0; color: #666;">4️⃣ 就能看到房間內所有人的位置！</p>
+            </div>
         </div>
     </div>
 
@@ -331,12 +343,12 @@
         /* 
          * ==================== Firebase 設定 ====================
          * 用途：連接到 Firebase 資料庫，提供實時通訊功能
-         * Firebase 專案設定
+         * 這是你的 Firebase 專案設定
          */
         const firebaseConfig = {
             apiKey: "AIzaSyBgtavsMQ16y68mE51Dt4ikRKrMo__dSgU",
             authDomain: "planning-with-ai-58e60.firebaseapp.com",
-            databaseURL: "https://planning-with-ai-58e60-default-rtdb.asia-southeast1.firebasedatabase.app",  // ⚠️ 需建立 Realtime Database 後才會有這個網址
+            databaseURL: "https://planning-with-ai-58e60-default-rtdb.asia-southeast1.firebasedatabase.app",  // ⚠️ 需要你建立 Realtime Database 後才會有這個網址
             projectId: "planning-with-ai-58e60",
             storageBucket: "planning-with-ai-58e60.firebasestorage.app",
             messagingSenderId: "32794179888",
@@ -375,28 +387,30 @@
                 return;
             }
 
+            console.log('🚀 開始建立房間...');
+            showMessage('createMessage', '🔄 正在建立房間，請稍候...', 'info');
+
             // 產生 6 位隨機房間代碼
             currentRoomCode = generateRoomCode();
             currentUserId = generateUserId();
             currentUserName = name;
 
+            console.log('📝 房間代碼:', currentRoomCode);
+            console.log('👤 使用者 ID:', currentUserId);
+            console.log('👤 使用者名稱:', currentUserName);
+
             // 取得位置並建立房間
             getLocationAndUpdate(function() {
+                console.log('✅ 位置已上傳到 Firebase');
                 showMessage('createMessage', '✅ 房間建立成功！', 'success');
                 
                 // 顯示房間代碼
                 document.getElementById('roomCodeDisplay').innerHTML = 
-                    '<div class="section-title" style="margin-top: 20px;">房間代碼</div>' +
+                    '<div class="section-title" style="margin-top: 20px;">📌 你的房間代碼</div>' +
                     '<div class="room-code">' + currentRoomCode + '</div>' +
-                    '<button onclick="copyRoomCode()">複製房間代碼</button>' +
-                    '<p class="help-text">將此代碼分享給朋友，他們就能加入你的房間！</p>';
-
-                // 切換到「我的房間」分頁
-                setTimeout(() => {
-                    showTab('myRoom');
-                    startLocationUpdates();
-                    listenToRoom();
-                }, 1500);
+                    '<button onclick="copyRoomCode()">📋 複製房間代碼</button>' +
+                    '<p class="help-text">✨ 將此代碼分享給朋友，他們就能加入你的房間！</p>' +
+                    '<button onclick="showTab(\'myRoom\'); startLocationUpdates(); listenToRoom();" style="margin-top: 10px;">➡️ 前往我的房間</button>';
             });
         }
 
@@ -418,26 +432,37 @@
                 return;
             }
 
+            console.log('🔍 正在檢查房間:', roomCode);
+            showMessage('joinMessage', '🔄 正在加入房間，請稍候...', 'info');
+
             // 檢查房間是否存在
             database.ref('rooms/' + roomCode).once('value').then((snapshot) => {
+                console.log('📊 房間資料:', snapshot.val());
+                
                 if (snapshot.exists()) {
+                    console.log('✅ 房間存在！');
                     currentRoomCode = roomCode;
                     currentUserId = generateUserId();
                     currentUserName = name;
 
                     // 取得位置並加入房間
                     getLocationAndUpdate(function() {
-                        showMessage('joinMessage', '✅ 成功加入房間！', 'success');
+                        console.log('✅ 成功加入房間');
+                        showMessage('joinMessage', '✅ 成功加入房間！正在載入...', 'success');
                         
                         setTimeout(() => {
                             showTab('myRoom');
                             startLocationUpdates();
                             listenToRoom();
-                        }, 1500);
+                        }, 1000);
                     });
                 } else {
+                    console.log('❌ 房間不存在');
                     showMessage('joinMessage', '❌ 房間不存在，請確認代碼是否正確', 'error');
                 }
+            }).catch((error) => {
+                console.error('❌ 檢查房間時發生錯誤:', error);
+                showMessage('joinMessage', '❌ 連線錯誤: ' + error.message, 'error');
             });
         }
 
@@ -446,8 +471,11 @@
          * 用途：使用 GPS 取得位置，並上傳到 Firebase 資料庫
          */
         function getLocationAndUpdate(callback) {
+            console.log('📍 開始取得位置...');
+            
             if (!navigator.geolocation) {
                 alert('❌ 您的裝置不支援定位功能');
+                console.error('❌ 裝置不支援定位');
                 return;
             }
 
@@ -456,6 +484,11 @@
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     const accuracy = position.coords.accuracy;
+
+                    console.log('📍 位置取得成功!');
+                    console.log('  緯度:', lat);
+                    console.log('  經度:', lng);
+                    console.log('  精確度:', accuracy, '公尺');
 
                     // 更新到 Firebase
                     const userData = {
@@ -466,17 +499,31 @@
                         timestamp: Date.now()
                     };
 
+                    console.log('☁️ 正在上傳到 Firebase...');
+                    console.log('  房間:', currentRoomCode);
+                    console.log('  使用者:', currentUserId);
+
                     database.ref('rooms/' + currentRoomCode + '/users/' + currentUserId).set(userData)
                         .then(() => {
-                            console.log('✅ 位置更新成功');
+                            console.log('✅ Firebase 更新成功！');
                             if (callback) callback();
                         })
                         .catch((error) => {
-                            console.error('❌ 位置更新失敗:', error);
+                            console.error('❌ Firebase 更新失敗:', error);
+                            alert('❌ 位置上傳失敗: ' + error.message);
                         });
                 },
                 function(error) {
-                    alert('❌ 無法取得位置，請檢查 GPS 是否開啟');
+                    console.error('❌ 定位失敗:', error);
+                    let errorMsg = '';
+                    if (error.code == 1) {
+                        errorMsg = '請允許網頁使用定位功能';
+                    } else if (error.code == 2) {
+                        errorMsg = '無法取得位置，請檢查 GPS 是否開啟';
+                    } else {
+                        errorMsg = '定位請求逾時，請重試';
+                    }
+                    alert('❌ ' + errorMsg);
                 },
                 {
                     enableHighAccuracy: true,
@@ -531,7 +578,7 @@
         function updateRoomDisplay() {
             // 顯示房間狀態
             document.getElementById('roomStatus').innerHTML = 
-                '<div class="message info">已連接到房間: <strong>' + currentRoomCode + '</strong></div>';
+                '<div class="message info">📡 已連接到房間: <strong>' + currentRoomCode + '</strong></div>';
 
             // 顯示我的位置
             const myData = friendsData[currentUserId];
@@ -732,7 +779,7 @@
 
         // 頁面載入時
         window.onload = function() {
-            showMessage('createMessage', '歡迎使用位置分享！請輸入你的名字開始。', 'info');
+            showMessage('createMessage', '👋 歡迎使用位置分享！請輸入你的名字開始。', 'info');
         };
     </script>
 </body>
