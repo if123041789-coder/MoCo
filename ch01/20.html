@@ -319,19 +319,19 @@
     <!-- ==================== 分頁 3: 我的房間 ==================== -->
     <div id="myRoom" class="tab-content">
         <div class="container">
-            <div class="section-title">房間資訊</div>
+            <div class="section-title">🏠 我的房間</div>
 
-            <div id="roomStatus"></div>
+            <div id="roomStatus">
+                <div class="message warning">⚠️ 你還沒有加入任何房間<br><br>請先到「建立房間」或「加入房間」分頁</div>
+            </div>
 
             <div id="myLocationBox"></div>
 
-            <button onclick="updateMyLocation()">更新我的位置</button>
+            <div id="locationUpdateBtn"></div>
 
-            <div class="section-title" style="margin-top: 20px;">在線好友 <span id="friendCount">(0)</span></div>
+            <div id="friendsSection"></div>
 
-            <div id="friendsList"></div>
-
-            <button onclick="leaveRoom()" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24;">離開房間</button>
+            <div id="leaveRoomBtn"></div>
         </div>
     </div>
 
@@ -554,17 +554,27 @@
          * 用途：即時監聽房間內其他使用者的位置變化
          */
         function listenToRoom() {
-            if (!currentRoomCode) return;
+            if (!currentRoomCode) {
+                console.error('❌ 沒有房間代碼');
+                return;
+            }
+
+            console.log('👂 開始監聽房間:', currentRoomCode);
 
             // 監聽房間內的所有使用者
             database.ref('rooms/' + currentRoomCode + '/users').on('value', (snapshot) => {
+                console.log('📡 收到房間更新');
                 friendsData = {};
                 const data = snapshot.val();
                 
                 if (data) {
+                    console.log('👥 房間內的使用者:', Object.keys(data).length, '人');
                     Object.keys(data).forEach(userId => {
                         friendsData[userId] = data[userId];
+                        console.log('  -', data[userId].name, ':', data[userId].lat, ',', data[userId].lng);
                     });
+                } else {
+                    console.log('⚠️ 房間內沒有使用者資料');
                 }
 
                 updateRoomDisplay();
@@ -576,48 +586,97 @@
          * 用途：顯示我的位置和所有在線好友
          */
         function updateRoomDisplay() {
+            console.log('🖥️ 更新房間顯示');
+            
+            // 檢查是否在房間內
+            if (!currentRoomCode) {
+                document.getElementById('roomStatus').innerHTML = 
+                    '<div class="message warning">⚠️ 你還沒有加入任何房間<br><br>請先到「建立房間」或「加入房間」分頁</div>';
+                document.getElementById('myLocationBox').innerHTML = '';
+                document.getElementById('locationUpdateBtn').innerHTML = '';
+                document.getElementById('friendsSection').innerHTML = '';
+                document.getElementById('leaveRoomBtn').innerHTML = '';
+                return;
+            }
+            
             // 顯示房間狀態
             document.getElementById('roomStatus').innerHTML = 
-                '<div class="message info">📡 已連接到房間: <strong>' + currentRoomCode + '</strong></div>';
+                '<div class="message info">📡 已連接到房間<br><strong style="font-size: 20px; letter-spacing: 2px;">' + currentRoomCode + '</strong></div>';
 
             // 顯示我的位置
             const myData = friendsData[currentUserId];
             if (myData) {
+                console.log('✅ 顯示我的位置');
                 document.getElementById('myLocationBox').innerHTML = 
+                    '<div class="section-title" style="margin-top: 20px;">📍 我的位置</div>' +
                     '<div class="info-box">' +
                     '<div class="info-row"><span class="label">我的名字:</span><span class="value">' + myData.name + '</span></div>' +
                     '<div class="info-row"><span class="label">緯度:</span><span class="value">' + myData.lat.toFixed(6) + '</span></div>' +
                     '<div class="info-row"><span class="label">經度:</span><span class="value">' + myData.lng.toFixed(6) + '</span></div>' +
                     '<div class="info-row"><span class="label">精確度:</span><span class="value">' + myData.accuracy.toFixed(0) + ' 公尺</span></div>' +
+                    '<div class="info-row"><span class="label">更新時間:</span><span class="value">' + getTimeAgo(myData.timestamp) + '</span></div>' +
                     '</div>';
+                
+                document.getElementById('locationUpdateBtn').innerHTML = 
+                    '<button onclick="updateMyLocation()">🔄 立即更新我的位置</button>' +
+                    '<p class="help-text">💡 系統每 10 秒會自動更新位置</p>';
+            } else {
+                console.log('⚠️ 找不到我的位置資料');
+                document.getElementById('myLocationBox').innerHTML = 
+                    '<div class="message warning">⚠️ 正在取得你的位置...</div>';
+                document.getElementById('locationUpdateBtn').innerHTML = 
+                    '<button onclick="updateMyLocation()">🔄 重新取得位置</button>';
             }
 
             // 顯示好友列表
-            let friendsHtml = '';
+            let friendsHtml = '<div class="section-title" style="margin-top: 20px;">👥 在線好友 <span id="friendCount">(0)</span></div>';
+            let friendsList = '';
             let friendCount = 0;
 
             Object.keys(friendsData).forEach(userId => {
                 if (userId !== currentUserId) {
                     const friend = friendsData[userId];
-                    const timeAgo = Math.floor((Date.now() - friend.timestamp) / 1000 / 60);
+                    const timeAgo = getTimeAgo(friend.timestamp);
                     const distance = calculateDistanceToFriend(friend);
 
-                    friendsHtml += 
+                    friendsList += 
                         '<div class="friend-item">' +
                         '<div>' +
                         '<span class="online-indicator"></span>' +
-                        '<strong>' + friend.name + '</strong><br>' +
-                        '<small style="color: #666;">' + timeAgo + ' 分鐘前 · ' + distance + '</small>' +
+                        '<strong style="font-size: 16px;">' + friend.name + '</strong><br>' +
+                        '<small style="color: #666;">📏 ' + distance + ' · 🕐 ' + timeAgo + '</small>' +
                         '</div>' +
-                        '<button onclick="showFriendDetail(\'' + userId + '\')" style="width: auto; padding: 8px 15px; margin: 0;">查看</button>' +
+                        '<button onclick="showFriendDetail(\'' + userId + '\')" style="width: auto; padding: 8px 15px; margin: 0;">📍 詳細</button>' +
                         '</div>';
                     
                     friendCount++;
                 }
             });
 
-            document.getElementById('friendCount').textContent = '(' + friendCount + ')';
-            document.getElementById('friendsList').innerHTML = friendsHtml || '<p style="text-align: center; color: #999;">目前沒有其他人在線上</p>';
+            console.log('👥 好友數量:', friendCount);
+            friendsHtml = friendsHtml.replace('(0)', '(' + friendCount + ')');
+            
+            if (friendCount === 0) {
+                friendsList = '<p style="text-align: center; color: #999; padding: 30px; background: #f9f9f9; border-radius: 5px;">📭 目前沒有其他人在線上<br><br>將房間代碼 <strong>' + currentRoomCode + '</strong> 分享給朋友吧！<br><br><button onclick="copyRoomCode()" style="width: auto; padding: 10px 20px;">📋 複製房間代碼</button></p>';
+            }
+            
+            friendsHtml += friendsList;
+            document.getElementById('friendsSection').innerHTML = friendsHtml;
+
+            // 顯示離開房間按鈕
+            document.getElementById('leaveRoomBtn').innerHTML = 
+                '<button onclick="leaveRoom()" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24; margin-top: 20px;">🚪 離開房間</button>';
+        }
+
+        /* 
+         * ==================== 輔助功能：計算時間差 ====================
+         */
+        function getTimeAgo(timestamp) {
+            const minutes = Math.floor((Date.now() - timestamp) / 1000 / 60);
+            if (minutes < 1) return '剛剛';
+            if (minutes < 60) return minutes + ' 分鐘前';
+            const hours = Math.floor(minutes / 60);
+            return hours + ' 小時前';
         }
 
         /* 
@@ -655,7 +714,13 @@
             const friend = friendsData[friendId];
             const myData = friendsData[currentUserId];
             
-            if (!friend || !myData) return;
+            if (!friend || !myData) {
+                alert('❌ 無法取得好友資料');
+                return;
+            }
+
+            // 計算距離
+            const distance = calculateDistanceToFriend(friend);
 
             // 計算方向
             const lat1 = myData.lat * Math.PI / 180;
@@ -672,16 +737,21 @@
             const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
             const index = Math.round(bearing / 45) % 8;
 
-            const distance = calculateDistanceToFriend(friend);
+            // 顯示詳細資訊的對話框
+            const detail = 
+                '👤 好友：' + friend.name + '\n' +
+                '━━━━━━━━━━━━━━━━\n' +
+                '📍 位置資訊：\n' +
+                '   緯度: ' + friend.lat.toFixed(6) + '\n' +
+                '   經度: ' + friend.lng.toFixed(6) + '\n' +
+                '   精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n' +
+                '\n' +
+                '📏 距離你：' + distance + '\n' +
+                '🧭 方向：' + directions[index] + ' ' + arrows[index] + '\n' +
+                '🕐 更新：' + getTimeAgo(friend.timestamp) + '\n' +
+                '━━━━━━━━━━━━━━━━\n';
 
-            alert(
-                '👤 ' + friend.name + '\n\n' +
-                '📍 位置：\n' +
-                '緯度: ' + friend.lat.toFixed(6) + '\n' +
-                '經度: ' + friend.lng.toFixed(6) + '\n\n' +
-                '📏 距離: ' + distance + '\n' +
-                '🧭 方向: ' + directions[index] + ' ' + arrows[index]
-            );
+            alert(detail);
         }
 
         /* 
