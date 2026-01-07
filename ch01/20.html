@@ -3,359 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>位置分享 - Firebase 版</title>
+    <title>位置分享</title>
     <style>
-        /* ==================== 整體頁面樣式 ==================== */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
-            box-sizing: border-box;
+            max-width: 800px;
+            margin: 0 auto;
         }
-
-        /* ==================== 白色容器樣式 ==================== */
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        /* ==================== 標題樣式 ==================== */
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        /* ==================== 區塊標題樣式 ==================== */
-        .section-title {
-            background: white;
-            color: #333;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            border: 2px solid #ddd;
-        }
-
-        /* ==================== 資訊框樣式 ==================== */
-        .info-box {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 10px 0;
-            border-left: 4px solid #333;
-        }
-
-        .info-row {
-            margin: 8px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .label {
-            color: #666;
-            font-weight: bold;
-        }
-
-        .value {
-            color: #333;
-        }
-
-        /* ==================== 按鈕樣式 ==================== */
-        button {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: white;
-            color: #333;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button:hover {
-            background: #f5f5f5;
-            border-color: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* ==================== 輸入框樣式 ==================== */
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        textarea {
-            height: 60px;
-            resize: vertical;
-        }
-
-        /* ==================== 訊息框樣式 ==================== */
-        .message {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
-        /* ==================== 分頁標籤樣式 ==================== */
-        .tabs {
-            display: flex;
-            margin-bottom: 0;
-            border-bottom: none;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            overflow: hidden;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            background: #f0f0f0;
-            border: none;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            background: white;
-            border-bottom: 3px solid #333;
-            font-weight: bold;
-        }
-
-        /* ==================== 分頁內容樣式 ==================== */
         .tab-content {
             display: none;
         }
-
         .tab-content.active {
             display: block;
         }
-
-        /* ==================== 距離顯示區樣式 ==================== */
-        .distance-display {
-            background: white;
-            color: #333;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 15px 0;
-            border: 2px solid #ddd;
-        }
-
-        .distance-value {
-            font-size: 36px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .direction-arrow {
-            font-size: 48px;
-            margin: 10px 0;
-        }
-
-        /* ==================== 房間 ID 顯示 ==================== */
-        .room-code {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            margin: 15px 0;
-            border: 2px dashed #333;
-        }
-
-        /* ==================== 在線好友列表 ==================== */
-        .friend-item {
-            background: #f9f9f9;
+        button {
             padding: 10px;
-            margin: 8px 0;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 4px solid #333;
+            margin: 5px;
+            cursor: pointer;
         }
-
-        .online-indicator {
-            width: 10px;
-            height: 10px;
-            background: #4CAF50;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
         }
-
-        .help-text {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
+        .message {
+            padding: 10px;
+            margin: 10px 0;
         }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        .warning { background: #fff3cd; }
+        .info { background: #d1ecf1; }
     </style>
 </head>
 <body>
-    <!-- ==================== 頁面標題 ==================== -->
-    <h1>📍 位置分享</h1>
-    <p class="subtitle">使用 Firebase 實時通訊</p>
-
-    <!-- ==================== 分頁標籤 ==================== -->
-    <div class="tabs">
-        <button class="tab active" onclick="showTab('createRoom')">建立房間</button>
-        <button class="tab" onclick="showTab('joinRoom')">加入房間</button>
-        <button class="tab" onclick="showTab('myRoom')">我的房間</button>
+    <h1>位置分享</h1>
+    <p>即時分享位置、查看好友位置、計算距離和方向</p>
+    
+    <!-- 分頁按鈕 -->
+    <div>
+        <button onclick="showTab('createRoom')">建立房間</button>
+        <button onclick="showTab('joinRoom')">加入房間</button>
+        <button onclick="showTab('myRoom')">我的房間</button>
     </div>
+    
+    <hr>
 
-    <!-- ==================== 分頁 1: 建立房間 ==================== -->
+    <!-- ========== 分頁 1: 建立房間 ========== -->
     <div id="createRoom" class="tab-content active">
-        <div class="container">
-            <div class="section-title">🏠 建立新房間</div>
-            
-            <div id="createMessage"></div>
-
-            <label>你的名字:</label>
-            <input type="text" id="myName" placeholder="例如: 小明" value="">
-
-            <button onclick="createNewRoom()">🚀 建立房間並開始分享</button>
-
-            <div id="roomCodeDisplay"></div>
-
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 15px;">
-                <p style="margin: 5px 0; color: #666;">💡 <strong>使用說明：</strong></p>
-                <p style="margin: 5px 0; color: #666;">1️⃣ 輸入你的名字後按「建立房間」</p>
-                <p style="margin: 5px 0; color: #666;">2️⃣ 允許瀏覽器使用定位功能</p>
-                <p style="margin: 5px 0; color: #666;">3️⃣ 複製房間代碼分享給朋友</p>
-                <p style="margin: 5px 0; color: #666;">4️⃣ 朋友用代碼加入就能互相看到位置！</p>
-            </div>
-        </div>
+        <h2>建立新房間</h2>
+        <div id="createMessage"></div>
+        
+        <label>你的名字:</label>
+        <input type="text" id="myName" placeholder="輸入你的名字">
+        
+        <button onclick="createNewRoom()">建立房間</button>
+        
+        <div id="roomCodeDisplay"></div>
+        
+        <hr>
+        <h3>使用說明</h3>
+        <ol>
+            <li>輸入你的名字</li>
+            <li>點「建立房間」按鈕</li>
+            <li>允許瀏覽器使用你的定位功能</li>
+            <li>系統會產生一個 6 位數的房間代碼</li>
+            <li>複製這個代碼分享給朋友</li>
+            <li>朋友在「加入房間」分頁輸入代碼就能加入</li>
+        </ol>
     </div>
 
-    <!-- ==================== 分頁 2: 加入房間 ==================== -->
+    <!-- ========== 分頁 2: 加入房間 ========== -->
     <div id="joinRoom" class="tab-content">
-        <div class="container">
-            <div class="section-title">🔗 加入朋友的房間</div>
-
-            <div id="joinMessage"></div>
-
-            <label>你的名字:</label>
-            <input type="text" id="joinName" placeholder="例如: 小華" value="">
-
-            <label>輸入房間代碼 (6位):</label> 
-            <input type="text" id="roomCodeInput" placeholder="例如: ABC123" style="text-transform: uppercase; font-size: 18px; text-align: center; letter-spacing: 2px;">
-
-            <button onclick="joinExistingRoom()">✅ 加入房間</button>
-
-            <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin-top: 15px;">
-                <p style="margin: 5px 0; color: #666;">💡 <strong>使用說明：</strong></p>
-                <p style="margin: 5px 0; color: #666;">1️⃣ 輸入你的名字</p>
-                <p style="margin: 5px 0; color: #666;">2️⃣ 貼上或輸入朋友給你的房間代碼</p>
-                <p style="margin: 5px 0; color: #666;">3️⃣ 按「加入房間」並允許定位</p>
-                <p style="margin: 5px 0; color: #666;">4️⃣ 就能看到房間內所有人的位置！</p>
-            </div>
-        </div>
+        <h2>加入房間</h2>
+        <div id="joinMessage"></div>
+        
+        <label>你的名字:</label>
+        <input type="text" id="joinName" placeholder="輸入你的名字">
+        
+        <label>房間代碼 (6位):</label>
+        <input type="text" id="roomCodeInput" placeholder="輸入房間代碼" maxlength="6" style="text-transform: uppercase;">
+        
+        <button onclick="joinExistingRoom()">加入房間</button>
+        
+        <hr>
+        <h3>使用說明</h3>
+        <ol>
+            <li>輸入你的名字</li>
+            <li>輸入或貼上朋友給你的 6 位房間代碼</li>
+            <li>點「加入房間」按鈕</li>
+            <li>允許瀏覽器使用你的定位功能</li>
+            <li>成功後會自動跳轉到「我的房間」</li>
+            <li>就能看到房間內所有人的位置了！</li>
+        </ol>
     </div>
 
-    <!-- ==================== 分頁 3: 我的房間 ==================== -->
+    <!-- ========== 分頁 3: 我的房間 ========== -->
     <div id="myRoom" class="tab-content">
-        <div class="container">
-            <div class="section-title">🏠 我的房間</div>
-
-            <div id="roomStatus">
-                <div class="message warning">⚠️ 你還沒有加入任何房間<br><br>請先到「建立房間」或「加入房間」分頁</div>
-            </div>
-
-            <div id="myLocationBox"></div>
-
-            <div id="locationUpdateBtn"></div>
-
-            <div id="friendsSection"></div>
-
-            <div id="leaveRoomBtn"></div>
+        <h2>我的房間</h2>
+        <div id="roomStatus">
+            <p>⚠️ 你還沒有加入房間，請先建立或加入房間</p>
         </div>
+        
+        <div id="myLocationBox"></div>
+        <div id="locationUpdateBtn"></div>
+        <div id="friendsSection"></div>
+        <div id="leaveRoomBtn"></div>
+        
+        <hr>
+        <h3>功能說明</h3>
+        <ul>
+            <li><strong>我的位置</strong>：顯示你目前的經緯度座標</li>
+            <li><strong>自動更新</strong>：系統每 10 秒自動更新一次位置</li>
+            <li><strong>在線好友</strong>：顯示房間內所有人的位置</li>
+            <li><strong>距離計算</strong>：自動計算你和好友之間的距離</li>
+            <li><strong>方向指示</strong>：顯示好友在你的哪個方向（北、南、東、西等）</li>
+            <li><strong>即時更新</strong>：當好友移動時，位置會即時更新</li>
+            <li><strong>立即更新</strong>：可以手動點按鈕立即更新你的位置</li>
+            <li><strong>離開房間</strong>：結束使用時記得點「離開房間」</li>
+        </ul>
     </div>
 
-    <!-- ==================== Firebase SDK ==================== -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        /* 
-         * ==================== Firebase 設定 ====================
-         * 用途：連接到 Firebase 資料庫，提供實時通訊功能
-         * 這是你的 Firebase 專案設定
-         */
+        /* ========== Firebase 設定 ========== */
         const firebaseConfig = {
             apiKey: "AIzaSyBgtavsMQ16y68mE51Dt4ikRKrMo__dSgU",
             authDomain: "planning-with-ai-58e60.firebaseapp.com",
-            databaseURL: "https://planning-with-ai-58e60-default-rtdb.asia-southeast1.firebasedatabase.app",  // ⚠️ 需要你建立 Realtime Database 後才會有這個網址
+            databaseURL: "https://planning-with-ai-58e60-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "planning-with-ai-58e60",
             storageBucket: "planning-with-ai-58e60.firebasestorage.app",
             messagingSenderId: "32794179888",
             appId: "1:32794179888:web:4e5c4281976d9dc6f370f5"
         };
 
-        // 初始化 Firebase
         let app, database;
         try {
             app = firebase.initializeApp(firebaseConfig);
@@ -363,22 +149,17 @@
             console.log('✅ Firebase 連接成功');
         } catch (error) {
             console.error('❌ Firebase 連接失敗:', error);
-            alert('Firebase 設定錯誤，請檢查設定！');
+            alert('Firebase 連接失敗: ' + error.message);
         }
 
-        /* 
-         * ==================== 全域變數 ====================
-         */
-        let currentRoomCode = null;      // 當前房間代碼
-        let currentUserId = null;        // 當前使用者 ID
-        let currentUserName = null;      // 當前使用者名稱
-        let locationUpdateInterval = null; // 位置更新計時器
-        let friendsData = {};            // 儲存好友資料
+        /* ========== 全域變數 ========== */
+        let currentRoomCode = null;
+        let currentUserId = null;
+        let currentUserName = null;
+        let locationUpdateInterval = null;
+        let friendsData = {};
 
-        /* 
-         * ==================== 功能 1: 建立新房間 ====================
-         * 用途：建立一個新的房間，並產生 6 位數的房間代碼
-         */
+        /* ========== 建立房間 ========== */
         function createNewRoom() {
             const name = document.getElementById('myName').value.trim();
             
@@ -387,37 +168,27 @@
                 return;
             }
 
-            console.log('🚀 開始建立房間...');
-            showMessage('createMessage', '🔄 正在建立房間，請稍候...', 'info');
+            showMessage('createMessage', '正在建立房間...', 'info');
 
-            // 產生 6 位隨機房間代碼
             currentRoomCode = generateRoomCode();
             currentUserId = generateUserId();
             currentUserName = name;
 
-            console.log('📝 房間代碼:', currentRoomCode);
-            console.log('👤 使用者 ID:', currentUserId);
-            console.log('👤 使用者名稱:', currentUserName);
+            console.log('建立房間:', currentRoomCode);
 
-            // 取得位置並建立房間
             getLocationAndUpdate(function() {
-                console.log('✅ 位置已上傳到 Firebase');
                 showMessage('createMessage', '✅ 房間建立成功！', 'success');
                 
-                // 顯示房間代碼
                 document.getElementById('roomCodeDisplay').innerHTML = 
-                    '<div class="section-title" style="margin-top: 20px;">📌 你的房間代碼</div>' +
-                    '<div class="room-code">' + currentRoomCode + '</div>' +
-                    '<button onclick="copyRoomCode()">📋 複製房間代碼</button>' +
-                    '<p class="help-text">✨ 將此代碼分享給朋友，他們就能加入你的房間！</p>' +
-                    '<button onclick="showTab(\'myRoom\'); startLocationUpdates(); listenToRoom();" style="margin-top: 10px;">➡️ 前往我的房間</button>';
+                    '<h3>你的房間代碼:</h3>' +
+                    '<p style="font-size: 32px; font-weight: bold; letter-spacing: 5px;">' + currentRoomCode + '</p>' +
+                    '<button onclick="copyRoomCode()">複製代碼</button>' +
+                    '<button onclick="goToMyRoom()">前往我的房間</button>' +
+                    '<p>把這個代碼分享給朋友，他們就能加入你的房間！</p>';
             });
         }
 
-        /* 
-         * ==================== 功能 2: 加入現有房間 ====================
-         * 用途：使用房間代碼加入朋友建立的房間
-         */
+        /* ========== 加入房間 ========== */
         function joinExistingRoom() {
             const name = document.getElementById('joinName').value.trim();
             const roomCode = document.getElementById('roomCodeInput').value.trim().toUpperCase();
@@ -432,166 +203,94 @@
                 return;
             }
 
-            console.log('🔍 正在檢查房間:', roomCode);
-            showMessage('joinMessage', '🔄 正在加入房間，請稍候...', 'info');
+            showMessage('joinMessage', '正在加入房間...', 'info');
 
-            // 檢查房間是否存在
             database.ref('rooms/' + roomCode).once('value').then((snapshot) => {
-                console.log('📊 房間資料:', snapshot.val());
-                
                 if (snapshot.exists()) {
-                    console.log('✅ 房間存在！');
                     currentRoomCode = roomCode;
                     currentUserId = generateUserId();
                     currentUserName = name;
 
-                    // 取得位置並加入房間
                     getLocationAndUpdate(function() {
-                        console.log('✅ 成功加入房間');
-                        showMessage('joinMessage', '✅ 成功加入房間！正在載入...', 'success');
-                        
-                        setTimeout(() => {
-                            showTab('myRoom');
-                            startLocationUpdates();
-                            listenToRoom();
-                        }, 1000);
+                        showMessage('joinMessage', '✅ 成功加入房間！', 'success');
+                        setTimeout(() => goToMyRoom(), 1000);
                     });
                 } else {
-                    console.log('❌ 房間不存在');
-                    showMessage('joinMessage', '❌ 房間不存在，請確認代碼是否正確', 'error');
+                    showMessage('joinMessage', '❌ 房間不存在，請確認代碼', 'error');
                 }
             }).catch((error) => {
-                console.error('❌ 檢查房間時發生錯誤:', error);
-                showMessage('joinMessage', '❌ 連線錯誤: ' + error.message, 'error');
+                showMessage('joinMessage', '❌ 錯誤: ' + error.message, 'error');
             });
         }
 
-        /* 
-         * ==================== 功能 3: 取得位置並更新到 Firebase ====================
-         * 用途：使用 GPS 取得位置，並上傳到 Firebase 資料庫
-         */
+        /* ========== 取得位置並上傳 ========== */
         function getLocationAndUpdate(callback) {
-            console.log('📍 開始取得位置...');
-            
             if (!navigator.geolocation) {
-                alert('❌ 您的裝置不支援定位功能');
-                console.error('❌ 裝置不支援定位');
+                alert('❌ 裝置不支援定位');
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    const lat = position.coords.latitude;
-                    const lng = position.coords.longitude;
-                    const accuracy = position.coords.accuracy;
-
-                    console.log('📍 位置取得成功!');
-                    console.log('  緯度:', lat);
-                    console.log('  經度:', lng);
-                    console.log('  精確度:', accuracy, '公尺');
-
-                    // 更新到 Firebase
                     const userData = {
                         name: currentUserName,
-                        lat: lat,
-                        lng: lng,
-                        accuracy: accuracy,
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
                         timestamp: Date.now()
                     };
 
-                    console.log('☁️ 正在上傳到 Firebase...');
-                    console.log('  房間:', currentRoomCode);
-                    console.log('  使用者:', currentUserId);
+                    console.log('上傳位置:', userData);
 
                     database.ref('rooms/' + currentRoomCode + '/users/' + currentUserId).set(userData)
                         .then(() => {
-                            console.log('✅ Firebase 更新成功！');
+                            console.log('✅ 位置上傳成功');
                             if (callback) callback();
                         })
                         .catch((error) => {
-                            console.error('❌ Firebase 更新失敗:', error);
-                            alert('❌ 位置上傳失敗: ' + error.message);
+                            console.error('❌ 上傳失敗:', error);
+                            alert('位置上傳失敗: ' + error.message);
                         });
                 },
                 function(error) {
-                    console.error('❌ 定位失敗:', error);
-                    let errorMsg = '';
-                    if (error.code == 1) {
-                        errorMsg = '請允許網頁使用定位功能';
-                    } else if (error.code == 2) {
-                        errorMsg = '無法取得位置，請檢查 GPS 是否開啟';
-                    } else {
-                        errorMsg = '定位請求逾時，請重試';
-                    }
-                    alert('❌ ' + errorMsg);
+                    let msg = '定位失敗';
+                    if (error.code == 1) msg = '請允許使用定位';
+                    else if (error.code == 2) msg = '無法取得位置';
+                    else msg = '定位逾時';
+                    alert('❌ ' + msg);
                 },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         }
 
-        /* 
-         * ==================== 功能 4: 開始定期更新位置 ====================
-         * 用途：每 10 秒自動更新一次位置到 Firebase
-         */
+        /* ========== 開始監聽房間 ========== */
         function startLocationUpdates() {
-            // 清除舊的計時器
-            if (locationUpdateInterval) {
-                clearInterval(locationUpdateInterval);
-            }
-
-            // 每 10 秒更新一次
-            locationUpdateInterval = setInterval(() => {
-                getLocationAndUpdate();
-            }, 10000);
+            if (locationUpdateInterval) clearInterval(locationUpdateInterval);
+            locationUpdateInterval = setInterval(() => getLocationAndUpdate(), 10000);
+            console.log('自動更新已啟動（每10秒）');
         }
 
-        /* 
-         * ==================== 功能 5: 監聽房間內的所有使用者 ====================
-         * 用途：即時監聽房間內其他使用者的位置變化
-         */
         function listenToRoom() {
-            if (!currentRoomCode) {
-                console.error('❌ 沒有房間代碼');
-                return;
-            }
-
-            console.log('👂 開始監聽房間:', currentRoomCode);
-
-            // 監聽房間內的所有使用者
+            if (!currentRoomCode) return;
+            
+            console.log('監聽房間:', currentRoomCode);
+            
             database.ref('rooms/' + currentRoomCode + '/users').on('value', (snapshot) => {
-                console.log('📡 收到房間更新');
                 friendsData = {};
                 const data = snapshot.val();
-                
                 if (data) {
-                    console.log('👥 房間內的使用者:', Object.keys(data).length, '人');
                     Object.keys(data).forEach(userId => {
                         friendsData[userId] = data[userId];
-                        console.log('  -', data[userId].name, ':', data[userId].lat, ',', data[userId].lng);
                     });
-                } else {
-                    console.log('⚠️ 房間內沒有使用者資料');
                 }
-
                 updateRoomDisplay();
             });
         }
 
-        /* 
-         * ==================== 功能 6: 更新房間顯示 ====================
-         * 用途：顯示我的位置和所有在線好友
-         */
+        /* ========== 更新房間顯示 ========== */
         function updateRoomDisplay() {
-            console.log('🖥️ 更新房間顯示');
-            
-            // 檢查是否在房間內
             if (!currentRoomCode) {
-                document.getElementById('roomStatus').innerHTML = 
-                    '<div class="message warning">⚠️ 你還沒有加入任何房間<br><br>請先到「建立房間」或「加入房間」分頁</div>';
+                document.getElementById('roomStatus').innerHTML = '<p>⚠️ 你還沒有加入房間</p>';
                 document.getElementById('myLocationBox').innerHTML = '';
                 document.getElementById('locationUpdateBtn').innerHTML = '';
                 document.getElementById('friendsSection').innerHTML = '';
@@ -599,95 +298,69 @@
                 return;
             }
             
-            // 顯示房間狀態
+            // 顯示房間代碼
             document.getElementById('roomStatus').innerHTML = 
-                '<div class="message info">📡 已連接到房間<br><strong style="font-size: 20px; letter-spacing: 2px;">' + currentRoomCode + '</strong></div>';
+                '<p>已連接到房間: <strong style="font-size: 24px;">' + currentRoomCode + '</strong></p>';
 
             // 顯示我的位置
             const myData = friendsData[currentUserId];
             if (myData) {
-                console.log('✅ 顯示我的位置');
                 document.getElementById('myLocationBox').innerHTML = 
-                    '<div class="section-title" style="margin-top: 20px;">📍 我的位置</div>' +
-                    '<div class="info-box">' +
-                    '<div class="info-row"><span class="label">我的名字:</span><span class="value">' + myData.name + '</span></div>' +
-                    '<div class="info-row"><span class="label">緯度:</span><span class="value">' + myData.lat.toFixed(6) + '</span></div>' +
-                    '<div class="info-row"><span class="label">經度:</span><span class="value">' + myData.lng.toFixed(6) + '</span></div>' +
-                    '<div class="info-row"><span class="label">精確度:</span><span class="value">' + myData.accuracy.toFixed(0) + ' 公尺</span></div>' +
-                    '<div class="info-row"><span class="label">更新時間:</span><span class="value">' + getTimeAgo(myData.timestamp) + '</span></div>' +
-                    '</div>';
+                    '<h3>我的位置</h3>' +
+                    '<p>名字: ' + myData.name + '</p>' +
+                    '<p>緯度: ' + myData.lat.toFixed(6) + '</p>' +
+                    '<p>經度: ' + myData.lng.toFixed(6) + '</p>' +
+                    '<p>精確度: ' + myData.accuracy.toFixed(0) + ' 公尺</p>' +
+                    '<p>更新時間: ' + getTimeAgo(myData.timestamp) + '</p>';
                 
                 document.getElementById('locationUpdateBtn').innerHTML = 
-                    '<button onclick="updateMyLocation()">🔄 立即更新我的位置</button>' +
-                    '<p class="help-text">💡 系統每 10 秒會自動更新位置</p>';
+                    '<button onclick="updateMyLocation()">🔄 立即更新位置</button>' +
+                    '<p><small>系統每 10 秒自動更新</small></p>';
             } else {
-                console.log('⚠️ 找不到我的位置資料');
-                document.getElementById('myLocationBox').innerHTML = 
-                    '<div class="message warning">⚠️ 正在取得你的位置...</div>';
+                document.getElementById('myLocationBox').innerHTML = '<p>⚠️ 正在取得位置...</p>';
                 document.getElementById('locationUpdateBtn').innerHTML = 
                     '<button onclick="updateMyLocation()">🔄 重新取得位置</button>';
             }
 
             // 顯示好友列表
-            let friendsHtml = '<div class="section-title" style="margin-top: 20px;">👥 在線好友 <span id="friendCount">(0)</span></div>';
-            let friendsList = '';
-            let friendCount = 0;
+            let friendsHtml = '<h3>在線好友 (' + (Object.keys(friendsData).length - 1) + ')</h3>';
+            let hasFriends = false;
 
             Object.keys(friendsData).forEach(userId => {
                 if (userId !== currentUserId) {
+                    hasFriends = true;
                     const friend = friendsData[userId];
-                    const timeAgo = getTimeAgo(friend.timestamp);
-                    const distance = calculateDistanceToFriend(friend);
-
-                    friendsList += 
-                        '<div class="friend-item">' +
-                        '<div>' +
-                        '<span class="online-indicator"></span>' +
-                        '<strong style="font-size: 16px;">' + friend.name + '</strong><br>' +
-                        '<small style="color: #666;">📏 ' + distance + ' · 🕐 ' + timeAgo + '</small>' +
-                        '</div>' +
-                        '<button onclick="showFriendDetail(\'' + userId + '\')" style="width: auto; padding: 8px 15px; margin: 0;">📍 詳細</button>' +
-                        '</div>';
+                    const distance = calculateDistance(friend);
+                    const direction = calculateDirection(friend);
                     
-                    friendCount++;
+                    friendsHtml += 
+                        '<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">' +
+                        '<p><strong>' + friend.name + '</strong></p>' +
+                        '<p>距離: ' + distance + '</p>' +
+                        '<p>方向: ' + direction + '</p>' +
+                        '<p>更新: ' + getTimeAgo(friend.timestamp) + '</p>' +
+                        '<button onclick="showFriendDetail(\'' + userId + '\')">查看詳細</button>' +
+                        '</div>';
                 }
             });
 
-            console.log('👥 好友數量:', friendCount);
-            friendsHtml = friendsHtml.replace('(0)', '(' + friendCount + ')');
-            
-            if (friendCount === 0) {
-                friendsList = '<p style="text-align: center; color: #999; padding: 30px; background: #f9f9f9; border-radius: 5px;">📭 目前沒有其他人在線上<br><br>將房間代碼 <strong>' + currentRoomCode + '</strong> 分享給朋友吧！<br><br><button onclick="copyRoomCode()" style="width: auto; padding: 10px 20px;">📋 複製房間代碼</button></p>';
+            if (!hasFriends) {
+                friendsHtml += '<p>目前沒有其他人在線上</p>' +
+                    '<p>房間代碼: <strong>' + currentRoomCode + '</strong></p>' +
+                    '<button onclick="copyRoomCode()">複製代碼分享給朋友</button>';
             }
             
-            friendsHtml += friendsList;
             document.getElementById('friendsSection').innerHTML = friendsHtml;
-
-            // 顯示離開房間按鈕
             document.getElementById('leaveRoomBtn').innerHTML = 
-                '<button onclick="leaveRoom()" style="background: #f8d7da; border-color: #f5c6cb; color: #721c24; margin-top: 20px;">🚪 離開房間</button>';
+                '<button onclick="leaveRoom()" style="background: #ffcccc;">🚪 離開房間</button>';
         }
 
-        /* 
-         * ==================== 輔助功能：計算時間差 ====================
-         */
-        function getTimeAgo(timestamp) {
-            const minutes = Math.floor((Date.now() - timestamp) / 1000 / 60);
-            if (minutes < 1) return '剛剛';
-            if (minutes < 60) return minutes + ' 分鐘前';
-            const hours = Math.floor(minutes / 60);
-            return hours + ' 小時前';
-        }
-
-        /* 
-         * ==================== 功能 7: 計算與好友的距離 ====================
-         * 用途：使用 Haversine 公式計算距離
-         */
-        function calculateDistanceToFriend(friend) {
+        /* ========== 計算距離 ========== */
+        function calculateDistance(friend) {
             const myData = friendsData[currentUserId];
             if (!myData) return '-- 公尺';
 
-            const R = 6371; // 地球半徑（公里）
+            const R = 6371;
             const lat1 = myData.lat * Math.PI / 180;
             const lat2 = friend.lat * Math.PI / 180;
             const dLat = (friend.lat - myData.lat) * Math.PI / 180;
@@ -706,23 +379,11 @@
             }
         }
 
-        /* 
-         * ==================== 功能 8: 顯示好友詳細資訊 ====================
-         * 用途：顯示好友的位置和方向
-         */
-        function showFriendDetail(friendId) {
-            const friend = friendsData[friendId];
+        /* ========== 計算方向 ========== */
+        function calculateDirection(friend) {
             const myData = friendsData[currentUserId];
-            
-            if (!friend || !myData) {
-                alert('❌ 無法取得好友資料');
-                return;
-            }
+            if (!myData) return '--';
 
-            // 計算距離
-            const distance = calculateDistanceToFriend(friend);
-
-            // 計算方向
             const lat1 = myData.lat * Math.PI / 180;
             const lat2 = friend.lat * Math.PI / 180;
             const dLng = (friend.lng - myData.lng) * Math.PI / 180;
@@ -733,77 +394,69 @@
             let bearing = Math.atan2(y, x) * 180 / Math.PI;
             bearing = (bearing + 360) % 360;
 
-            const directions = ['北', '東北', '東', '東南', '南', '西南', '西', '西北'];
-            const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
-            const index = Math.round(bearing / 45) % 8;
-
-            // 顯示詳細資訊的對話框
-            const detail = 
-                '👤 好友：' + friend.name + '\n' +
-                '━━━━━━━━━━━━━━━━\n' +
-                '📍 位置資訊：\n' +
-                '   緯度: ' + friend.lat.toFixed(6) + '\n' +
-                '   經度: ' + friend.lng.toFixed(6) + '\n' +
-                '   精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n' +
-                '\n' +
-                '📏 距離你：' + distance + '\n' +
-                '🧭 方向：' + directions[index] + ' ' + arrows[index] + '\n' +
-                '🕐 更新：' + getTimeAgo(friend.timestamp) + '\n' +
-                '━━━━━━━━━━━━━━━━\n';
-
-            alert(detail);
+            const directions = ['北 ↑', '東北 ↗', '東 →', '東南 ↘', '南 ↓', '西南 ↙', '西 ←', '西北 ↖'];
+            return directions[Math.round(bearing / 45) % 8];
         }
 
-        /* 
-         * ==================== 功能 9: 手動更新位置 ====================
-         */
+        /* ========== 顯示好友詳細資訊 ========== */
+        function showFriendDetail(friendId) {
+            const friend = friendsData[friendId];
+            if (!friend) return;
+
+            const distance = calculateDistance(friend);
+            const direction = calculateDirection(friend);
+
+            alert(
+                 friend.name + '\n\n' +
+                '位置:\n' +
+                '緯度: ' + friend.lat.toFixed(6) + '\n' +
+                '經度: ' + friend.lng.toFixed(6) + '\n' +
+                '精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n\n' +
+                '距離: ' + distance + '\n' +
+                '方向: ' + direction + '\n' +
+                '更新: ' + getTimeAgo(friend.timestamp)
+            );
+        }
+
+        /* ========== 手動更新位置 ========== */
         function updateMyLocation() {
+            if (!currentRoomCode) {
+                alert('❌ 你還沒有加入房間');
+                return;
+            }
             getLocationAndUpdate(function() {
-                alert('✅ 位置更新成功！');
+                alert('✅ 位置更新成功');
             });
         }
 
-        /* 
-         * ==================== 功能 10: 離開房間 ====================
-         * 用途：從 Firebase 移除自己的資料並離開房間
-         */
+        /* ========== 離開房間 ========== */
         function leaveRoom() {
-            if (!currentRoomCode || !currentUserId) return;
+            if (!currentRoomCode) return;
 
             if (confirm('確定要離開房間嗎？')) {
-                // 移除我的資料
                 database.ref('rooms/' + currentRoomCode + '/users/' + currentUserId).remove();
                 
-                // 停止位置更新
-                if (locationUpdateInterval) {
-                    clearInterval(locationUpdateInterval);
-                }
-
-                // 停止監聽
+                if (locationUpdateInterval) clearInterval(locationUpdateInterval);
                 database.ref('rooms/' + currentRoomCode + '/users').off();
 
-                // 清空變數
                 currentRoomCode = null;
                 currentUserId = null;
                 currentUserName = null;
                 friendsData = {};
 
-                // 清空顯示
-                document.getElementById('roomStatus').innerHTML = '';
-                document.getElementById('myLocationBox').innerHTML = '';
-                document.getElementById('friendsList').innerHTML = '';
-
-                // 切換到建立房間分頁
                 showTab('createRoom');
                 showMessage('createMessage', '✅ 已離開房間', 'success');
             }
         }
 
-        /* 
-         * ==================== 輔助功能 ====================
-         */
-        
-        // 產生房間代碼（6 位英數字）
+        /* ========== 前往我的房間 ========== */
+        function goToMyRoom() {
+            showTab('myRoom');
+            startLocationUpdates();
+            listenToRoom();
+        }
+
+        /* ========== 輔助功能 ========== */
         function generateRoomCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let code = '';
@@ -813,43 +466,46 @@
             return code;
         }
 
-        // 產生使用者 ID
         function generateUserId() {
             return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // 複製房間代碼
         function copyRoomCode() {
+            if (!currentRoomCode) {
+                alert('❌ 沒有房間代碼');
+                return;
+            }
             navigator.clipboard.writeText(currentRoomCode).then(() => {
-                alert('✅ 房間代碼已複製: ' + currentRoomCode);
+                alert('✅ 已複製房間代碼: ' + currentRoomCode);
+            }).catch(() => {
+                prompt('請手動複製:', currentRoomCode);
             });
         }
 
-        // 顯示訊息
+        function getTimeAgo(timestamp) {
+            const minutes = Math.floor((Date.now() - timestamp) / 1000 / 60);
+            if (minutes < 1) return '剛剛';
+            if (minutes < 60) return minutes + ' 分鐘前';
+            return Math.floor(minutes / 60) + ' 小時前';
+        }
+
         function showMessage(elementId, text, type) {
             document.getElementById(elementId).innerHTML = 
                 '<div class="message ' + type + '">' + text + '</div>';
         }
 
-        // 切換分頁
         function showTab(tabName) {
             const contents = document.getElementsByClassName('tab-content');
             for (let i = 0; i < contents.length; i++) {
                 contents[i].classList.remove('active');
             }
-
-            const tabs = document.getElementsByClassName('tab');
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
-            }
-
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
         }
 
-        // 頁面載入時
+        // 頁面載入
         window.onload = function() {
-            showMessage('createMessage', '👋 歡迎使用位置分享！請輸入你的名字開始。', 'info');
+            console.log('應用程式已載入');
+            showMessage('createMessage', '歡迎使用位置分享！輸入名字開始。', 'info');
         };
     </script>
 </body>
