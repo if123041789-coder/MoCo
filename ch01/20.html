@@ -472,9 +472,20 @@
 
         /* ========== 前往我的房間 ========== */
         function goToMyRoom() {
+            console.log('🏠 前往我的房間, 房間代碼:', currentRoomCode);
+            
+            if (!currentRoomCode) {
+                console.error('❌ 沒有房間代碼');
+                alert('❌ 沒有房間資訊，請重新建立或加入房間');
+                return;
+            }
+            
             showTab('myRoom');
             startLocationUpdates();
             listenToRoom();
+            
+            // 立即更新一次顯示
+            updateRoomDisplay();
         }
 
         /* ========== localStorage 儲存功能 ========== */
@@ -563,14 +574,38 @@
             
             // 嘗試從 localStorage 恢復資料
             if (loadFromLocalStorage()) {
-                console.log('✅ 偵測到之前的房間，自動恢復中...');
-                showMessage('createMessage', '✅ 已恢復上次的房間連線！', 'success');
+                console.log('✅ 偵測到之前的房間');
+                console.log('   房間代碼:', currentRoomCode);
+                console.log('   使用者 ID:', currentUserId);
+                console.log('   使用者名稱:', currentUserName);
                 
-                // 自動跳到我的房間並開始更新
-                setTimeout(() => {
-                    goToMyRoom();
-                }, 1000);
+                showMessage('createMessage', '✅ 已恢復上次的房間連線！正在重新連接...', 'success');
+                
+                // 檢查房間是否還存在
+                database.ref('rooms/' + currentRoomCode).once('value').then((snapshot) => {
+                    if (snapshot.exists()) {
+                        console.log('✅ 房間仍然存在');
+                        
+                        // 重新上傳位置到 Firebase
+                        getLocationAndUpdate(function() {
+                            console.log('✅ 位置已重新上傳');
+                            
+                            // 自動跳到我的房間並開始更新
+                            setTimeout(() => {
+                                goToMyRoom();
+                            }, 500);
+                        });
+                    } else {
+                        console.log('❌ 房間已不存在');
+                        clearLocalStorage();
+                        showMessage('createMessage', '⚠️ 之前的房間已失效，請重新建立或加入房間', 'warning');
+                    }
+                }).catch((error) => {
+                    console.error('檢查房間時發生錯誤:', error);
+                    showMessage('createMessage', '❌ 無法連接到 Firebase', 'error');
+                });
             } else {
+                console.log('ℹ️ 沒有之前的房間資料');
                 showMessage('createMessage', '👋 歡迎使用位置分享！輸入名字開始。', 'info');
             }
         };
