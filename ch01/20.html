@@ -188,6 +188,9 @@
 
             console.log('建立房間:', currentRoomCode);
 
+            // 儲存到 localStorage（重新整理後能恢復）
+            saveToLocalStorage();
+
             getLocationAndUpdate(function() {
                 showMessage('createMessage', '✅ 房間建立成功！', 'success');
                 
@@ -222,6 +225,9 @@
                     currentRoomCode = roomCode;
                     currentUserId = generateUserId();
                     currentUserName = name;
+
+                    // 儲存到 localStorage
+                    saveToLocalStorage();
 
                     getLocationAndUpdate(function() {
                         showMessage('joinMessage', '✅ 成功加入房間！', 'success');
@@ -456,6 +462,9 @@
                 currentUserName = null;
                 friendsData = {};
 
+                // 清除 localStorage
+                clearLocalStorage();
+
                 showTab('createRoom');
                 showMessage('createMessage', '✅ 已離開房間', 'success');
             }
@@ -466,6 +475,40 @@
             showTab('myRoom');
             startLocationUpdates();
             listenToRoom();
+        }
+
+        /* ========== localStorage 儲存功能 ========== */
+        function saveToLocalStorage() {
+            const data = {
+                roomCode: currentRoomCode,
+                userId: currentUserId,
+                userName: currentUserName
+            };
+            localStorage.setItem('locationShareData', JSON.stringify(data));
+            console.log('💾 已儲存到 localStorage');
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('locationShareData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    currentRoomCode = data.roomCode;
+                    currentUserId = data.userId;
+                    currentUserName = data.userName;
+                    console.log('📂 已從 localStorage 恢復資料');
+                    return true;
+                } catch (e) {
+                    console.error('恢復資料失敗:', e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('locationShareData');
+            console.log('🗑️ 已清除 localStorage');
         }
 
         /* ========== 輔助功能 ========== */
@@ -517,7 +560,19 @@
         // 頁面載入
         window.onload = function() {
             console.log('🚀 應用程式已載入');
-            showMessage('createMessage', '👋 歡迎使用位置分享！輸入名字開始。', 'info');
+            
+            // 嘗試從 localStorage 恢復資料
+            if (loadFromLocalStorage()) {
+                console.log('✅ 偵測到之前的房間，自動恢復中...');
+                showMessage('createMessage', '✅ 已恢復上次的房間連線！', 'success');
+                
+                // 自動跳到我的房間並開始更新
+                setTimeout(() => {
+                    goToMyRoom();
+                }, 1000);
+            } else {
+                showMessage('createMessage', '👋 歡迎使用位置分享！輸入名字開始。', 'info');
+            }
         };
     </script>
 </body>
