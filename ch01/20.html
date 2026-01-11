@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>位置分享</title>
     <style>
+        /* 最基本的樣式 */
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -39,7 +40,7 @@
     </style>
 </head>
 <body>
-    <h1>位置分享</h1>
+    <h1>📍 位置分享</h1>
     <p><strong>使用 Firebase 實時通訊技術</strong></p>
     <p>即時分享位置、查看好友位置、計算距離和方向</p>
     
@@ -179,7 +180,7 @@
                 return;
             }
 
-            showMessage('createMessage', '正在建立房間...', 'info');
+            showMessage('createMessage', '🔄 正在建立房間...', 'info');
 
             currentRoomCode = generateRoomCode();
             currentUserId = generateUserId();
@@ -217,7 +218,7 @@
                 return;
             }
 
-            showMessage('joinMessage', '正在加入房間...', 'info');
+            showMessage('joinMessage', '🔄 正在加入房間...', 'info');
 
             database.ref('rooms/' + roomCode).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
@@ -284,13 +285,13 @@
         function startLocationUpdates() {
             if (locationUpdateInterval) clearInterval(locationUpdateInterval);
             locationUpdateInterval = setInterval(() => getLocationAndUpdate(), 10000);
-            console.log('自動更新已啟動（每10秒）');
+            console.log('⏰ 自動更新已啟動（每10秒）');
         }
 
         function listenToRoom() {
             if (!currentRoomCode) return;
             
-            console.log('監聽房間:', currentRoomCode);
+            console.log('👂 監聽房間:', currentRoomCode);
             
             database.ref('rooms/' + currentRoomCode + '/users').on('value', (snapshot) => {
                 friendsData = {};
@@ -323,7 +324,7 @@
             const myData = friendsData[currentUserId];
             if (myData) {
                 document.getElementById('myLocationBox').innerHTML = 
-                    '<h3>我的位置</h3>' +
+                    '<h3>📍 我的位置</h3>' +
                     '<p>名字: ' + myData.name + '</p>' +
                     '<p>緯度: ' + myData.lat.toFixed(6) + '</p>' +
                     '<p>經度: ' + myData.lng.toFixed(6) + '</p>' +
@@ -424,8 +425,8 @@
             const direction = calculateDirection(friend);
 
             alert(
-                'friend.name + '\n\n' +
-                '位置:\n' +
+                '👤 ' + friend.name + '\n\n' +
+                '📍 位置:\n' +
                 '緯度: ' + friend.lat.toFixed(6) + '\n' +
                 '經度: ' + friend.lng.toFixed(6) + '\n' +
                 '精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n\n' +
@@ -471,7 +472,7 @@
 
         /* ========== 前往我的房間 ========== */
         function goToMyRoom() {
-            console.log('前往我的房間, 房間代碼:', currentRoomCode);
+            console.log('🏠 前往我的房間, 房間代碼:', currentRoomCode);
             
             if (!currentRoomCode) {
                 console.error('❌ 沒有房間代碼');
@@ -495,7 +496,7 @@
                 userName: currentUserName
             };
             localStorage.setItem('locationShareData', JSON.stringify(data));
-            console.log('已儲存到 localStorage');
+            console.log('💾 已儲存到 localStorage');
         }
 
         function loadFromLocalStorage() {
@@ -506,7 +507,7 @@
                     currentRoomCode = data.roomCode;
                     currentUserId = data.userId;
                     currentUserName = data.userName;
-                    console.log('已從 localStorage 恢復資料');
+                    console.log('📂 已從 localStorage 恢復資料');
                     return true;
                 } catch (e) {
                     console.error('恢復資料失敗:', e);
@@ -518,7 +519,7 @@
 
         function clearLocalStorage() {
             localStorage.removeItem('locationShareData');
-            console.log('已清除 localStorage');
+            console.log('🗑️ 已清除 localStorage');
         }
 
         /* ========== 輔助功能 ========== */
@@ -569,7 +570,7 @@
 
         // 頁面載入
         window.onload = function() {
-            console.log('應用程式已載入');
+            console.log('🚀 應用程式已載入');
             
             // 嘗試從 localStorage 恢復資料
             if (loadFromLocalStorage()) {
@@ -604,8 +605,8 @@
                     showMessage('createMessage', '❌ 無法連接到 Firebase', 'error');
                 });
             } else {
-                console.log('沒有之前的房間資料');
-                showMessage('createMessage', '歡迎使用位置分享！輸入名字開始。', 'info');
+                console.log('ℹ️ 沒有之前的房間資料');
+                showMessage('createMessage', '👋 歡迎使用位置分享！輸入名字開始。', 'info');
             }
         };
     </script>
