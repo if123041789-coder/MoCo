@@ -40,6 +40,7 @@
 </head>
 <body>
     <h1>位置分享</h1>
+    <p><strong>使用 Firebase 實時通訊技術</strong></p>
     <p>即時分享位置、查看好友位置、計算距離和方向</p>
     
     <!-- 分頁按鈕 -->
@@ -216,7 +217,7 @@
                 return;
             }
 
-            showMessage('joinMessage', '🔄 正在加入房間...', 'info');
+            showMessage('joinMessage', '正在加入房間...', 'info');
 
             database.ref('rooms/' + roomCode).once('value').then((snapshot) => {
                 if (snapshot.exists()) {
@@ -330,16 +331,16 @@
                     '<p>更新時間: ' + getTimeAgo(myData.timestamp) + '</p>';
                 
                 document.getElementById('locationUpdateBtn').innerHTML = 
-                    '<button onclick="updateMyLocation()">立即更新位置</button>' +
+                    '<button onclick="updateMyLocation()">🔄 立即更新位置</button>' +
                     '<p><small>系統每 10 秒自動更新</small></p>';
             } else {
                 document.getElementById('myLocationBox').innerHTML = '<p>⚠️ 正在取得位置...</p>';
                 document.getElementById('locationUpdateBtn').innerHTML = 
-                    '<button onclick="updateMyLocation()">重新取得位置</button>';
+                    '<button onclick="updateMyLocation()">🔄 重新取得位置</button>';
             }
 
             // 顯示好友列表
-            let friendsHtml = '<h3>在線好友 (' + (Object.keys(friendsData).length - 1) + ')</h3>';
+            let friendsHtml = '<h3>👥 在線好友 (' + (Object.keys(friendsData).length - 1) + ')</h3>';
             let hasFriends = false;
 
             Object.keys(friendsData).forEach(userId => {
@@ -368,7 +369,7 @@
             
             document.getElementById('friendsSection').innerHTML = friendsHtml;
             document.getElementById('leaveRoomBtn').innerHTML = 
-                '<button onclick="leaveRoom()" style="background: #ffcccc;">離開房間</button>';
+                '<button onclick="leaveRoom()" style="background: #ffcccc;">🚪 離開房間</button>';
         }
 
         /* ========== 計算距離 ========== */
@@ -428,9 +429,9 @@
                 '緯度: ' + friend.lat.toFixed(6) + '\n' +
                 '經度: ' + friend.lng.toFixed(6) + '\n' +
                 '精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n\n' +
-                '距離: ' + distance + '\n' +
-                '方向: ' + direction + '\n' +
-                '更新: ' + getTimeAgo(friend.timestamp)
+                '📏 距離: ' + distance + '\n' +
+                '🧭 方向: ' + direction + '\n' +
+                '🕐 更新: ' + getTimeAgo(friend.timestamp)
             );
         }
 
@@ -517,7 +518,7 @@
 
         function clearLocalStorage() {
             localStorage.removeItem('locationShareData');
-            console.log('🗑️ 已清除 localStorage');
+            console.log('已清除 localStorage');
         }
 
         /* ========== 輔助功能 ========== */
@@ -596,7 +597,7 @@
                     } else {
                         console.log('❌ 房間已不存在');
                         clearLocalStorage();
-                        showMessage('createMessage', '之前的房間已失效，請重新建立或加入房間', 'warning');
+                        showMessage('createMessage', '⚠️ 之前的房間已失效，請重新建立或加入房間', 'warning');
                     }
                 }).catch((error) => {
                     console.error('檢查房間時發生錯誤:', error);
