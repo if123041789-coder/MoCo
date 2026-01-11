@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>位置分享</title>
     <style>
-        /* 最基本的樣式 */
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -40,8 +39,7 @@
     </style>
 </head>
 <body>
-    <h1>📍 位置分享</h1>
-    <p><strong>使用 Firebase 實時通訊技術</strong></p>
+    <h1>位置分享</h1>
     <p>即時分享位置、查看好友位置、計算距離和方向</p>
     
     <!-- 分頁按鈕 -->
@@ -180,7 +178,7 @@
                 return;
             }
 
-            showMessage('createMessage', '🔄 正在建立房間...', 'info');
+            showMessage('createMessage', '正在建立房間...', 'info');
 
             currentRoomCode = generateRoomCode();
             currentUserId = generateUserId();
@@ -285,13 +283,13 @@
         function startLocationUpdates() {
             if (locationUpdateInterval) clearInterval(locationUpdateInterval);
             locationUpdateInterval = setInterval(() => getLocationAndUpdate(), 10000);
-            console.log('⏰ 自動更新已啟動（每10秒）');
+            console.log('自動更新已啟動（每10秒）');
         }
 
         function listenToRoom() {
             if (!currentRoomCode) return;
             
-            console.log('👂 監聽房間:', currentRoomCode);
+            console.log('監聽房間:', currentRoomCode);
             
             database.ref('rooms/' + currentRoomCode + '/users').on('value', (snapshot) => {
                 friendsData = {};
@@ -324,7 +322,7 @@
             const myData = friendsData[currentUserId];
             if (myData) {
                 document.getElementById('myLocationBox').innerHTML = 
-                    '<h3>📍 我的位置</h3>' +
+                    '<h3>我的位置</h3>' +
                     '<p>名字: ' + myData.name + '</p>' +
                     '<p>緯度: ' + myData.lat.toFixed(6) + '</p>' +
                     '<p>經度: ' + myData.lng.toFixed(6) + '</p>' +
@@ -332,16 +330,16 @@
                     '<p>更新時間: ' + getTimeAgo(myData.timestamp) + '</p>';
                 
                 document.getElementById('locationUpdateBtn').innerHTML = 
-                    '<button onclick="updateMyLocation()">🔄 立即更新位置</button>' +
+                    '<button onclick="updateMyLocation()">立即更新位置</button>' +
                     '<p><small>系統每 10 秒自動更新</small></p>';
             } else {
                 document.getElementById('myLocationBox').innerHTML = '<p>⚠️ 正在取得位置...</p>';
                 document.getElementById('locationUpdateBtn').innerHTML = 
-                    '<button onclick="updateMyLocation()">🔄 重新取得位置</button>';
+                    '<button onclick="updateMyLocation()">重新取得位置</button>';
             }
 
             // 顯示好友列表
-            let friendsHtml = '<h3>👥 在線好友 (' + (Object.keys(friendsData).length - 1) + ')</h3>';
+            let friendsHtml = '<h3>在線好友 (' + (Object.keys(friendsData).length - 1) + ')</h3>';
             let hasFriends = false;
 
             Object.keys(friendsData).forEach(userId => {
@@ -370,7 +368,7 @@
             
             document.getElementById('friendsSection').innerHTML = friendsHtml;
             document.getElementById('leaveRoomBtn').innerHTML = 
-                '<button onclick="leaveRoom()" style="background: #ffcccc;">🚪 離開房間</button>';
+                '<button onclick="leaveRoom()" style="background: #ffcccc;">離開房間</button>';
         }
 
         /* ========== 計算距離 ========== */
@@ -425,14 +423,14 @@
             const direction = calculateDirection(friend);
 
             alert(
-                '👤 ' + friend.name + '\n\n' +
-                '📍 位置:\n' +
+                'friend.name + '\n\n' +
+                '位置:\n' +
                 '緯度: ' + friend.lat.toFixed(6) + '\n' +
                 '經度: ' + friend.lng.toFixed(6) + '\n' +
                 '精確度: ' + friend.accuracy.toFixed(0) + ' 公尺\n\n' +
-                '📏 距離: ' + distance + '\n' +
-                '🧭 方向: ' + direction + '\n' +
-                '🕐 更新: ' + getTimeAgo(friend.timestamp)
+                '距離: ' + distance + '\n' +
+                '方向: ' + direction + '\n' +
+                '更新: ' + getTimeAgo(friend.timestamp)
             );
         }
 
@@ -472,7 +470,7 @@
 
         /* ========== 前往我的房間 ========== */
         function goToMyRoom() {
-            console.log('🏠 前往我的房間, 房間代碼:', currentRoomCode);
+            console.log('前往我的房間, 房間代碼:', currentRoomCode);
             
             if (!currentRoomCode) {
                 console.error('❌ 沒有房間代碼');
@@ -496,7 +494,7 @@
                 userName: currentUserName
             };
             localStorage.setItem('locationShareData', JSON.stringify(data));
-            console.log('💾 已儲存到 localStorage');
+            console.log('已儲存到 localStorage');
         }
 
         function loadFromLocalStorage() {
@@ -507,7 +505,7 @@
                     currentRoomCode = data.roomCode;
                     currentUserId = data.userId;
                     currentUserName = data.userName;
-                    console.log('📂 已從 localStorage 恢復資料');
+                    console.log('已從 localStorage 恢復資料');
                     return true;
                 } catch (e) {
                     console.error('恢復資料失敗:', e);
@@ -570,7 +568,7 @@
 
         // 頁面載入
         window.onload = function() {
-            console.log('🚀 應用程式已載入');
+            console.log('應用程式已載入');
             
             // 嘗試從 localStorage 恢復資料
             if (loadFromLocalStorage()) {
@@ -598,15 +596,15 @@
                     } else {
                         console.log('❌ 房間已不存在');
                         clearLocalStorage();
-                        showMessage('createMessage', '⚠️ 之前的房間已失效，請重新建立或加入房間', 'warning');
+                        showMessage('createMessage', '之前的房間已失效，請重新建立或加入房間', 'warning');
                     }
                 }).catch((error) => {
                     console.error('檢查房間時發生錯誤:', error);
                     showMessage('createMessage', '❌ 無法連接到 Firebase', 'error');
                 });
             } else {
-                console.log('ℹ️ 沒有之前的房間資料');
-                showMessage('createMessage', '👋 歡迎使用位置分享！輸入名字開始。', 'info');
+                console.log('沒有之前的房間資料');
+                showMessage('createMessage', '歡迎使用位置分享！輸入名字開始。', 'info');
             }
         };
     </script>
